@@ -28,6 +28,7 @@ gear_params(params)
 gear_params(params)$catchability <- sp$`Fishing (external) mortality rate`
 gear_params(params)$knife_edge_size <- as.numeric(sp$`Minimum landing size cm`)
 gear_params(params)$knife_edge_size[7] <- 25 #change later
+initial_effort(params) <- 1 #fishing effort 
 
 plotSpectra(params)
 
