@@ -31,13 +31,20 @@ gear_params(params)$catchability <- sp$`Fishing (external) mortality rate`
 gear_params(params)$knife_edge_size <- as.numeric(sp$`Minimum landing size cm`)
 gear_params(params)$knife_edge_size[7] <- 25 #change later
 
-plotSpectra(params)
+Interaction.matrix <- read.delim("Interaction matrix.txt", header=FALSE)
+inter <- as.matrix(Interaction.matrix)
+rownames(inter) <- sp$`Species of interest`
+colnames(inter) <- sp$`Species of interest`
+params <- setInteraction(params, interaction = inter)
 
-params <- steady(params) #takes x years to find a steady state 
-plotSpectra(params)
 initial_effort(params) <- 1 #fishing effort 
 
+params <- steady(params) #takes x years to find a steady state 
+
 species_params(params)
+
+plotSpectra(params)
+
 
 params <- tuneParams(params, controls = c("abundance", "predation", "reproduction", "other", "interaction", "resource"))
 #calibrate and match 
