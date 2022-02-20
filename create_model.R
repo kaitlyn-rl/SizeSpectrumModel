@@ -24,6 +24,10 @@ sp$w_mat
 sp$biomass_observed <- sp$'Observed Biomass kg/km^2'
 sp$k_vb <- sp$'Growth coefficient K'
 
+Predation_Params <- read_excel("Predation Params.xlsx") #predation
+sp$beta <- Predation_Params$beta
+sp$sigma <- Predation_Params$sigma
+
 params <- newMultispeciesParams(sp)
 
 gear_params(params)
