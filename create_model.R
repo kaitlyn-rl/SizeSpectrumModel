@@ -144,6 +144,7 @@ gear_params(params_BH)$gear <- "balanced"
 species_params(params_BH)$gear <- "balanced"
 params_BH <- setRateFunction(params_BH, "FMort", "productionFMort")
 params_BH <- setFishing(params_BH, initial_effort = 10e4)
+saveParams(params_BH, "params_BH_beforesteady.rds")
 params_BH <- steady(params_BH) #Run dynamics to steady state
 params_BH <- tuneGrowth(params_BH) #Tune parameters then re-run to steady state
 
@@ -153,23 +154,24 @@ saveParams(params_BH, "params_BH.rds") #Can be accessed via Git repository
 #To re-create following simulation & plots, load in updated parameters object
 params_BH <- readRDS("params_BH.rds")
 
-#Simulate a BH model where initial abundances are forced to equal those of the min landing size simulation
-params_BH2 <- params_BH
-initialN(params_BH2) <- initialN(params_minlandfishing)
-params_BH2 <- tuneGrowth(params_BH2) #Tune parameters then re-run to steady state
-saveParams(params_BH2, "params_BH2.rds") #Can be accessed via Git repository
-params_BH2 <- readRDS("params_BH2.rds") #Load parameter object
-simBH2 <- project(params_BH2, effort=10, t_max = 75) #Run simulation for 75 years
-plot(simBH2)
-plotBiomass(simBH2, total = TRUE)
-plotSpectra(simBH2, power=1, resource = FALSE, total = TRUE)
-
 simBH <- project(params_BH, effort=10e4, t_max = 75) #Run simulation for 75 years
 plot(simBH)
 plotBiomass(simBH, total = TRUE)
 plotSpectra(simBH, power=1, resource = FALSE, total = TRUE)
 slopeBH <- getCommunitySlope(simBH, min_w = 0.01, max_w = 1000)
 mean(slopeBH$slope) #-1.291445
+
+#Simulate a BH model without running to steady state 
+#To re-create following simulation & plots, load in updated parameters object
+params_BH2 <- readRDS("params_BH_beforesteady.rds")
+params_BH2 <- setFishing(params_BH2, initial_effort = 0.1)
+params_BH2@gear_params$catchability <- 1
+simBH2 <- project(params_BH2, effort=0.1, t_max = 75) #Run simulation for 75 years
+plot(simBH2)
+plotBiomass(simBH2, total = TRUE)
+plotSpectra(simBH2, power=1, resource = FALSE, total = TRUE)
+slopeBH2 <- getCommunitySlope(simBH2, min_w = 0.01, max_w = 1000)
+mean(slopeBH2$slope) #-1.039897
 
 #Plot total yield for each fishing method over time
 TotYield1 <- TotalYield(sim1)
@@ -186,8 +188,8 @@ matplot(cbind(TotYield1, TotYieldBH2),
         log = "xy", type = "l", #main = "Total yield of all species over time",  
         xlab = "Year", ylab = "Yield", col = c(2,4), lty=c(1,1), 
         lwd = 3, bty = "l",cex.axis=1.2,cex.lab=1.2)
-legend(x = "bottomright",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting II"),
-       lty = c(1,1), col = c(2,4), lwd = 3, cex = 1.2, title = "Fishing method")
+legend(x = "right",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting II"),
+       lty = c(1,1), col = c(2,4), lwd = 3, cex = 1, title = "Fishing method")
 
 #Plot total biomass for each fishing method over time
 TotBiom1 <- TotalBiomass(sim1)
@@ -199,7 +201,7 @@ matplot(cbind(TotBiom1, TotBiom0, TotBiomBH, TotAbunBH2),
         xlab = "Year", ylab = "Biomass [kg km^-2 year^-1]", col = c(2,3,4,1), lty=c(1,1,1), 
         lwd = 3, cex.main=1.2, cex.axis=1.5, cex.lab=1.5)
 legend(x = "topleft", legend = c("Constant Fishing at Min Landing Size","No Fishing","Balanced Harvesting","Balanced Harvesting II"),
-       lty = c(1,1,1), col = c(2,3,4,1), lwd = 3, cex = 0.8, title = "Fishing method")
+       lty = c(1,1,1), col = c(2,3,4,1), lwd = 3, cex = 0.7, title = "Fishing method")
 #Just plotting the two fishing systems
 matplot(cbind(TotBiom1, TotBiomBH), 
         log = "xy", type = "l", main = "Total Biomass",  
@@ -212,8 +214,8 @@ matplot(cbind(TotBiom1, TotBiomBH2),
         log = "xy", type = "l", main = "Total Biomass",  
         xlab = "Year", ylab = "Biomass [kg km^-2 year^-1]", col = c(2,4), lty=c(1,1), 
         lwd = 3, cex.main=1.2, cex.axis=1.5, cex.lab=1.5)
-legend(x = "topright",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting II"),
-       lty = c(1,1), col = c(2,4), lwd = 3, cex = 1.2, title = "Fishing method")
+legend(x = "right",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting II"),
+       lty = c(1,1), col = c(2,4), lwd = 3, cex = 1, title = "Fishing method")
 
 #Plot total abundance for each fishing method over time
 TotAbun1 <- TotalAbundance(sim1)
@@ -225,8 +227,8 @@ matplot(cbind(TotAbun1, TotAbun0, TotAbunBH, TotAbunBH2),
         xlab = "Year", ylab = "Abundance", col = c(2,3,4,1), lty=c(1,1,1), 
         lwd = 3, cex.main=1.2, cex.axis=1.5, cex.lab=1.5)
 legend(x = "topleft",legend = c("Constant Fishing at Min Landing Size","No Fishing","Balanced Harvesting", "Balanced Harvesting II"),
-       lty = c(1,1,1), col = c(2,3,4,1), lwd = 3, cex = 0.8, title = "Fishing method")
+       lty = c(1,1,1), col = c(2,3,4,1), lwd = 3, cex = 0.7, title = "Fishing method")
 mean(TotAbunBH) #47744.72
-mean(TotAbunBH2) #1717.2
+mean(TotAbunBH2) #49755.26
 min(TotAbun0) #219.0246
-max(TotAbun0) #102634648866
+max(TotAbun0) #10263464886
