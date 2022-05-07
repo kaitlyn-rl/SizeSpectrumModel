@@ -122,7 +122,6 @@ relative_abundance <- total_abund1/total_abund0
 plot(x = w(params_minlandfishing), y = relative_abundance, log = "xy", type = "n", 
      xlab = "Size [g]", ylab = "Relative abundance")
 lines(x = w(params_minlandfishing), y = relative_abundance)
-lines(x = c(min(w(params_minlandfishing)), max(w(params_minlandfishing))), y = c(1, 1), lty = 2)
 
 #Plot total predation mortality by size for each fishing scenario
 PMort0 <- getPredMort(params_nofishing, finalN(sim0))[4,]
@@ -177,7 +176,7 @@ mean(slopeBH2$slope) #-1.039897
 TotYield1 <- TotalYield(sim1)
 TotYieldBH <- TotalYield(simBH)
 matplot(cbind(TotYield1, TotYieldBH), 
-        log = "xy", type = "l", #main = "Total yield of all species over time",  
+        log = "xy", type = "l", main = "Total Yield",  
         xlab = "Year", ylab = "Yield", col = c(2,4), lty=c(1,1), 
         lwd = 3, bty = "l",cex.axis=1.2,cex.lab=1.2)
 legend(x = "center",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting"),
@@ -185,7 +184,7 @@ legend(x = "center",legend = c("Constant Fishing at Min Landing Size","Balanced 
 
 TotYieldBH2 <- TotalYield(simBH2)
 matplot(cbind(TotYield1, TotYieldBH2), 
-        log = "xy", type = "l", #main = "Total yield of all species over time",  
+        log = "xy", type = "l", main = "Total Yield",  
         xlab = "Year", ylab = "Yield", col = c(2,4), lty=c(1,1), 
         lwd = 3, bty = "l",cex.axis=1.2,cex.lab=1.2)
 legend(x = "right",legend = c("Constant Fishing at Min Landing Size","Balanced Harvesting II"),
