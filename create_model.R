@@ -119,18 +119,18 @@ mean(slope0$slope) #-0.8117456
 total_abund0 <- colSums(finalN(sim0)) 
 total_abund1 <- colSums(finalN(sim1))
 relative_abundance <- total_abund1/total_abund0
-plot(x = w(params), y = relative_abundance, log = "xy", type = "n", 
+plot(x = w(params_minlandfishing), y = relative_abundance, log = "xy", type = "n", 
      xlab = "Size [g]", ylab = "Relative abundance")
-lines(x = w(params), y = relative_abundance)
-lines(x = c(min(w(params)), max(w(params))), y = c(1, 1), lty = 2)
+lines(x = w(params_minlandfishing), y = relative_abundance)
+lines(x = c(min(w(params_minlandfishing)), max(w(params_minlandfishing))), y = c(1, 1), lty = 2)
 
 #Plot total predation mortality by size for each fishing scenario
 PMort0 <- getPredMort(params_nofishing, finalN(sim0))[4,]
 PMort1 <- getPredMort(params_minlandfishing, finalN(sim1))[4,]
-plot(x = w(params), y = PMort0, log = "x", type = "n", 
+plot(x = w(params_minlandfishing), y = PMort0, log = "x", type = "n", 
      xlab = "Size [g]", ylab = "Predation Mortality [1/year]")
-lines(x = w(params), y = PMort0, lty = 2)
-lines(x = w(params), y = PMort1)
+lines(x = w(params_minlandfishing), y = PMort0, lty = 2)
+lines(x = w(params_minlandfishing), y = PMort1)
 legend(x="topright", legend = c("no fishing", "fishing"), lty = c(2,1))
 
 ###Balanced harvesting###
